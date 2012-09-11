@@ -227,6 +227,7 @@ namespace Wintellect.Paraffin
         private const String INCLUDEFILEITEMELEM = "File";
         private const String REGEXEXELEMENT = "RegExExcludes";
         private const String REGEXEXITEMELEM = "RegEx";
+        private const String REGISTERASSEMBLYTYPE = "RegisterAssemblyType";
         #endregion
 
         // The WiX 3.0 namespace.
@@ -457,7 +458,8 @@ namespace Wintellect.Paraffin
                     new XElement(WIN64ELEM, argValues.Win64),
                     new XElement(NORECURSELEM, argValues.NoRecursion),
                     new XElement(NODIRECTORYELEM, argValues.NoRootDirectory),
-                    new XElement(DISKIDELEM, argValues.DiskId));
+                    new XElement(DISKIDELEM, argValues.DiskId),
+                    new XElement(REGISTERASSEMBLYTYPE, argValues.RegisterAssemblyType));
 
             // Add the file extension exclusions.
             XElement extList = new XElement(EXTEXCLUDEELEM);
@@ -812,6 +814,18 @@ namespace Wintellect.Paraffin
 
             file.Add(new XAttribute("KeyPath", "yes"));
 
+            if (true == argValues.RegisterAssemblies)
+            {
+                // Set assembly type if actual file is a assembly
+                try
+                {   
+                    // if exception is thrown do not add the assembly type
+                    System.Reflection.AssemblyName.GetAssemblyName(fileName);
+                    file.Add(new XAttribute("Assembly", argValues.RegisterAssemblyType));    
+                }
+                catch (System.BadImageFormatException) { }
+            }
+            
             fileName = AliasedFilename(fileName);
             file.Add(new XAttribute("Source", fileName));
             return file;

@@ -37,6 +37,8 @@
       <Word>dmp</Word>
       <Word>loadby</Word>
       <Word>RegEx</Word>
+      <Word>RegisterAssemblies</Word>
+      <Word>ra</Word>
       <Word>pu</Word>
       <Word>pcf</Word>
       <Word>util</Word>

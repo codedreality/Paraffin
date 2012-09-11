@@ -385,4 +385,7 @@ Here is an example .ParaffinMold file to insert a Registry element.
   <data name="VerboseAddingNamespace" xml:space="preserve">
     <value>Adding custom namespace     : {0}={1}</value>
   </data>
+  <data name="UnknownAssemblyType" xml:space="preserve">
+    <value>Unknown assembly type. Allowed types are '.net' or 'win32'.</value>
+  </data>
 </root>

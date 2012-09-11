@@ -779,6 +779,12 @@ namespace Wintellect.Paraffin
                 argValues.DiskId = 1;
             }
 
+            var registerAssemblyType = options.Descendants(REGISTERASSEMBLYTYPE);
+            if (registerAssemblyType.Count() == 1)
+            {
+                argValues.RegisterAssemblyType = registerAssemblyType.First().Value;
+            }
+
             var includeFileNode = options.Descendants(INCLUDEFILESELEM);
             foreach (var item in includeFileNode.Descendants())
             {

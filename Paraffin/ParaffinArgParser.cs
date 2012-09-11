@@ -7,6 +7,8 @@
 // </Project>
 //------------------------------------------------------------------------------
 
+using System.Linq;
+
 namespace Wintellect.Paraffin
 {
     using System;
@@ -57,6 +59,8 @@ namespace Wintellect.Paraffin
         private const string PATCHUPDATESHORT = "pu";
         private const string REGEXEXCLUDE = "regExExclude";
         private const string REGEXEXCLUDESHORT = "rex";
+        private const string REGISTERASSEMBLYTYPE = "RegisterAssemblyType";
+        private const string REGISTERASSEMBLYTYPESHORT = "rat";
         private const string REPORTIFDIFFERENT = "ReportIfDifferent";
         private const string REPORTIFDIFFERENTSHORT = "rid";
         private const string UPDATE = "update";
@@ -73,6 +77,13 @@ namespace Wintellect.Paraffin
 
         // Indicates the error was found in OnDoneParse.
         private Boolean errorInOnDoneParse;
+
+        // AssembyTypes
+        private static readonly Dictionary<string, string> AssemblyTypes = new Dictionary<string, string>()
+        {
+            {"dotNet", ".net"},
+            {"Win32", "win32"},                                                     
+        };
 
         /// <summary>
         /// Initializes a new instance of the ParaffinArgParser class.
@@ -118,6 +129,8 @@ namespace Wintellect.Paraffin
                             INCFILESHORT,
                             REGEXEXCLUDE, 
                             REGEXEXCLUDESHORT,
+                            REGISTERASSEMBLYTYPE,
+                            REGISTERASSEMBLYTYPESHORT,
                             WIN64VAR,
                         },
                     true)
@@ -134,6 +147,7 @@ namespace Wintellect.Paraffin
             this.DiskId = 1;
             this.IncludeFiles = new List<String>();
             this.RegExExcludes = new List<Regex>();
+            this.RegisterAssemblies = false;
             this.Win64 = String.Empty;
 
             this.Version = Program.CurrentFileVersion;
@@ -230,6 +244,12 @@ namespace Wintellect.Paraffin
         /// validity of these values.
         /// </summary>
         public List<String> IncludeFiles { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the user wants to register 
+        /// assemblies.
+        /// </summary>
+        public String RegisterAssemblyType { get; set; }
         #endregion
 
         /// <summary>
@@ -238,6 +258,12 @@ namespace Wintellect.Paraffin
         /// </summary>
         public List<Regex> RegExExcludes { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating wheter the user wants to register
+        /// assembly files.
+        /// </summary>
+        public Boolean RegisterAssemblies { get; set; }
+        
         /// <summary>
         /// Gets or sets a value indicating whether the user wants to update a 
         /// previously created file.
@@ -474,6 +500,29 @@ namespace Wintellect.Paraffin
                             // There's a problem with the regular expression.
                             ss = SwitchStatus.Error;
                             this.errorMessage = ex.Message;
+                        }
+                    }
+
+                    break;
+
+                case REGISTERASSEMBLYTYPE:
+                case REGISTERASSEMBLYTYPESHORT:
+                    {
+                        // Only assembly types of ".net" or "win32" are allowed
+                        Boolean typeNotFound = true;
+                        foreach (var pair in AssemblyTypes.Where(pair => switchValue.Equals(pair.Value, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            this.RegisterAssemblies = true;
+                            this.RegisterAssemblyType = pair.Value;
+                            typeNotFound = false;
+                            break;
+                        }
+
+                        
+                        if (true == typeNotFound)
+                        {
+                            this.errorMessage = Constants.UnknownAssemblyType;
+                            ss = SwitchStatus.Error;
                         }
                     }
 
